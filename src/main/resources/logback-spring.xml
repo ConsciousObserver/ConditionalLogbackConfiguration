@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+
+	<shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook" />
+
+	<springProperty scope="context" name="APPLICATION_NAME"
+		source="spring.application.name" />
+
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+	<include
+		resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+	<springProfile name="file_logging_enabled">
+		<appender name="FILE_APPENDER"
+			class="ch.qos.logback.core.rolling.RollingFileAppender">
+			<file>${APPLICATION_NAME}.log</file>
+			<encoder
+				class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+				<!-- Following two properties are defined in defaults.xml of
+				Spring Boot-->
+				<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+				<charset>${CONSOLE_LOG_CHARSET}</charset>
+			</encoder>
+
+			<rollingPolicy
+				class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+				<FileNamePattern>${APPLICATION_NAME}.%i.log.zip</FileNamePattern>
+				<MinIndex>1</MinIndex>
+				<MaxIndex>10</MaxIndex>
+			</rollingPolicy>
+
+			<triggeringPolicy
+				class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+				<!-- Chosing small size for the demo, it should be something
+				like 10MB or 100MB in real use case-->
+				<MaxFileSize>10KB</MaxFileSize>
+			</triggeringPolicy>
+		</appender>
+	</springProfile>
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+
+		<springProfile name="file_logging_enabled">
+			<appender-ref ref="FILE_APPENDER" />
+		</springProfile>
+	</root>
+</configuration>

@@ -1,0 +1,10 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: conditional-logback-configuration
+
+  profiles:
+    active:
+    - file_logging_enabled
